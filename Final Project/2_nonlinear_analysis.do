@@ -218,6 +218,24 @@ foreach coin of local coins {
 }
 file close `bds_results'
 
+*── A4. Panel Unit Root Tests (Stationarity Proof) ──────────────────────────
+display as result "  A4. Fisher-type Panel Unit Root Tests (Stationarity)"
+
+tempname unitroot_file
+file open `unitroot_file' using "`tables'/A4_unit_roots.csv", write replace
+file write `unitroot_file' "Variable,Statistic_P,p_value,Stationary" _n
+
+foreach var in ln_return r_gold r_usd r_sp500 r_vix {
+    capture quietly xtunitroot fisher `var', dfuller lags(1)
+    if _rc == 0 {
+        local p_stat = r(P)
+        local p_val  = r(p_P)
+        local stat_txt = cond(`p_val' < 0.05, "Yes", "No")
+        file write `unitroot_file' "`var'," %8.4f (`p_stat') "," %8.4f (`p_val') ",`stat_txt'" _n
+    }
+}
+file close `unitroot_file'
+
 ********************************************************************************
 * MODULE B – REGIME DETECTION
 ********************************************************************************
@@ -693,28 +711,48 @@ display as result "════════════════════�
 *── E1. Panel Fixed-Effects Baseline ─────────────────────────────────────────
 display as result "  E1. Panel FE baseline"
 
+* Hausman Test for Random vs Fixed Effects
+display as result "  E1a. Hausman Test (FE vs RE)"
+quietly xtreg ln_return r_gold r_usd r_sp500 r_vix treasury10y fed_funds l.ln_return, re
+estimates store re_model
+quietly xtreg ln_return r_gold r_usd r_sp500 r_vix treasury10y fed_funds l.ln_return, fe
+estimates store fe_model
+capture noisily hausman fe_model re_model
+
 * Standard FE regression: crypto return ~ macro returns + controls
+* Added Cross-Sectional Clustered SEs via vce(cluster coin_id)
 xtreg ln_return r_gold r_usd r_sp500 r_vix ///
     treasury10y fed_funds l.ln_return, ///
-    fe robust
+    fe vce(cluster coin_id)
 capture outreg2 using "`tables'/E1_panel_fe_baseline.doc", ///
-    replace title("Panel FE: Crypto Returns on Macro") ///
+    replace title("Panel FE: Crypto Returns on Macro (Clustered SE)") ///
     ctitle("All Coins")
 
 * Alternative: estout / esttab
 eststo m_fe_all: xtreg ln_return r_gold r_usd r_sp500 r_vix ///
-    treasury10y fed_funds l.ln_return, fe robust
+    treasury10y fed_funds l.ln_return, fe vce(cluster coin_id)
 
 * Run by sector
 levelsof sector, local(sectors)
 foreach sec of local sectors {
     capture eststo m_fe_`sec': xtreg ln_return r_gold r_usd r_sp500 r_vix ///
-        treasury10y fed_funds l.ln_return if sector == "`sec'", fe robust
+        treasury10y fed_funds l.ln_return if sector == "`sec'", fe vce(cluster coin_id)
 }
 
 esttab m_fe_all m_fe_* using "`tables'/E1_panel_fe_baseline.csv", ///
     b(4) se(4) star(* 0.10 ** 0.05 *** 0.01) ///
     title("Panel FE: Crypto Returns on Macro Variables (by Sector)") replace
+
+*── E1b. Panel Fixed-Effects with Lagged Macro (Causality Check) ─────────────
+display as result "  E1b. Lagged Macro Returns (Temporal Precedence)"
+
+eststo m_fe_lag: xtreg ln_return l.r_gold l.r_usd l.r_sp500 l.r_vix ///
+    l.treasury10y l.fed_funds l.ln_return, fe vce(cluster coin_id)
+
+esttab m_fe_all m_fe_lag using "`tables'/E1b_causality_lags.csv", ///
+    b(4) se(4) star(* 0.10 ** 0.05 *** 0.01) ///
+    title("Panel FE: Contemporaneous vs Lagged Macro Impact") ///
+    mtitles("Contemporaneous" "Lagged (t-1)") replace
 
 *── E2. Nonlinear Panel: Regime × Macro interactions ─────────────────────────
 display as result "  E2. Regime × Macro interaction panel"
@@ -734,7 +772,7 @@ eststo m_interact: xtreg ln_return ///
     r_gold r_usd r_sp500 r_vix ///
     vix_x_rgold vix_x_rusd vix_x_rsp500 vix_x_rvix ///
     high_vix treasury10y fed_funds l.ln_return, ///
-    fe robust
+    fe vce(cluster coin_id)
 
 esttab m_fe_all m_interact using "`tables'/E2_panel_interaction.csv", ///
     b(4) se(4) star(* 0.10 ** 0.05 *** 0.01) ///
