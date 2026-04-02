@@ -2,8 +2,8 @@
   main.do  –  ECU33092 Final Project
   -----------------------------------------------------------------------------
   TOPIC   : Nonlinear Dynamics in Cryptocurrency Pricing vs Macro Indicators
-  AUTHOR  : [Your Name]
-  DATE    : March 2026
+  AUTHOR  : Raj Aryan Upadhyaya
+  DATE    : April 2026
 
   PIPELINE:
     1_clean_data.do          → builds Cleaned Data/crypto_macro_daily.dta
