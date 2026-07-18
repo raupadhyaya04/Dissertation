@@ -212,4 +212,39 @@ Tutorials/
 
 *.png
 
-*.zip
+*.zip/methods
+/Labs
+*.csv
+*.dta
+.venv
+.env
+
+# ==========================================
+# Stata Specific Ignore Rules
+# ==========================================
+
+# Stata output logs and smcl
+*.log
+*.smcl
+
+# Saved graphs and estimates
+*.gph
+*.ster
+
+# Temporary files and autosaves
+*.tmp
+*~
+*.do.bak
+test_*.do
+
+# ==========================================
+# OS & Environment
+# ==========================================
+.DS_Store
+__pycache__/
+
+# ==========================================
+# Project Output Directories (Stops repo bloat)
+# ==========================================
+Final Project/Output/
+Final Project/Cleaned Data/rolling_betas/
