@@ -1,0 +1,13 @@
+[dependency-groups]
+dev = [
+    "binance>=0.3.143",
+    "fredapi>=0.5.2",
+    "matplotlib>=3.11.2",
+    "pandas>=3.0.6",
+    "praw>=8.0.3",
+    "scikit-learn>=1.9.1",
+    "seaborn>=0.13.2",
+    "statsmodels>=0.15.0",
+    "vadersentiment>=3.3.2",
+    "yfinance>=1.7.0",
+]

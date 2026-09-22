@@ -100,7 +100,7 @@ To obtain data: Run collection scripts with your own API credentials.
 
 ## 📚 Dependencies
 
-pip install -r requirements.txt
+uv sync
 
 ---
 
