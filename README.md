@@ -1,20 +1,10 @@
-# ECU33143 – Big Data in Economics Research Project
-
-This repository contains my completed research project for **ECU33143: Introduction to Big Data in Economics**, investigating the pricing dynamics of cryptocurrencies through both macroeconomic fundamentals and social media sentiment analysis.
+# ECU44100
 
 ---
 
-## 🔍 Research Overview
+## Research Question: tbc
 
-This project addresses two interrelated questions:
-
-> **1. Do cryptocurrencies respond systematically to macroeconomic indicators?**  
-> **2. Does social media sentiment predict returns or improve risk forecasting?**
-
-### Key Finding
-**Social media sentiment does not predict cryptocurrency returns** (weak Granger causality: only 1/10 assets significant, p > 0.70 for most), **but dramatically improves tail-risk forecasting** (Conditional VaR achieved 100% Kupiec test pass rate vs 0% for Historical VaR).
-
-This demonstrates that **sentiment operates as a risk factor rather than a leading indicator**—capturing latent market stress that manifests in tail events rather than mean returns.
+### Key Finding: TBC
 
 ---
 
@@ -116,9 +106,8 @@ pip install -r requirements.txt
 
 ## 🎓 Academic Context
 
-**Course**: ECU33143 – Introduction to Big Data in Economics  
 **Institution**: Trinity College Dublin
-**Completion**: December 2025
+**Completion**: TBC
 
 ---
 
